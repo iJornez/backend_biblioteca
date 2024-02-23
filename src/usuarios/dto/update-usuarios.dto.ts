@@ -16,7 +16,7 @@ export class UpdateUsuariosDto extends PartialType(UsuariosDto) {
   email: string;
 
   estadoDelUsuario: EstadoUsuario[];
-  roles: Role[];
+  roles: Role;
   prestamos_usuario: Prestamo[];
 
 

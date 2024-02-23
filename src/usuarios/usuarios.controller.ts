@@ -1,13 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuariosDto } from './dto/update-usuarios.dto';
 import { Usuarios } from './entities/usuarios.entity';
+import { registerDto } from './dto/register.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) { }
 
- 
+  @HttpCode(HttpStatus.OK)
+  @Post('/register')
+  async registerIn(@Body() registerDto: registerDto) {
+    return await this.usuariosService.registerIn(registerDto);
+  }
 
   @Get('/obtener')
   Obtener() {

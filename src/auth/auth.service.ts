@@ -1,6 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Body, Inject, Injectable } from '@nestjs/common';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LoginDto } from './dto/login.dto';
+import { registerDto } from '../usuarios/dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -8,4 +9,5 @@ export class AuthService {
   async signIn(userSignIn: LoginDto) {
     return await this.jwtStrategy.loginJwt(userSignIn);
   }
+  
 }

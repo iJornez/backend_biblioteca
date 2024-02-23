@@ -39,7 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const payloadZ = {
       cedula: userBd[0].cedula,
       usuario: userBd[0].nombre,
-      rol: (userBd[0].roles == null)? 'Sin Rol': userBd[0].roles[0].descripcion,
+      rol: (userBd[0].roles == null)? 'Sin Rol': userBd[0].roles.descripcion,
     };
     return {
       ...payloadZ,
@@ -50,7 +50,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async loginJwt(payload: JwtPayload): Promise<any> {
     const { cedula, password } = payload;
     if(cedula == null && password == null){
-        return new BadRequestException("Escribe esa monda bien");
+        return new BadRequestException("Escriba los datos correctamente!");
     }
     const userBd = await this.usuarioRepository
       .find({
@@ -66,11 +66,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const payloadZ = {
       cedula: userBd[0].cedula,
       nombre: userBd[0].nombre,
-      rol: (userBd[0].roles == null)? 'Sin Rol': userBd[0].roles[0].descripcion,
+      rol: (userBd[0].roles == null)? 'Sin Rol': userBd[0].roles.descripcion,
     };
     delete userBd[0].password;
     const userReturn = {
-      rol: (userBd[0].roles == null)? 'Sin Rol': userBd[0].roles[0].descripcion,
+      rol: (userBd[0].roles == null)? 'Sin Rol': userBd[0].roles.descripcion,
       access_token: await this.jwtService.signAsync(payloadZ),
     };
     return userReturn;

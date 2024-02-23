@@ -31,7 +31,7 @@ export class Usuarios {
 
   @ManyToOne(() => Role, usuario => usuario.roles)
   @JoinColumn()
-  roles: Role[];
+  roles: Role;
 
   @OneToMany(() => Prestamo, prestamo => prestamo.usuario)
   prestamos_usuario: Prestamo[];

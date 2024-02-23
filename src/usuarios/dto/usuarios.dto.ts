@@ -1,4 +1,3 @@
-import { EstadoUsuario } from "src/estado_usuario/entities/estado_usuario.entity";
 import { Role } from "src/roles/entities/role.entity";
 
 export class UsuariosDto {
@@ -8,8 +7,7 @@ export class UsuariosDto {
     telefono: number;
     email: string;
     password: string;
-    estadoDelUsuario:EstadoUsuario[];
-    roles: Role[];
+    roles: Role;
 
 }
 

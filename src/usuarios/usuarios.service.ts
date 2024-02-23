@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Body, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuarios } from './entities/usuarios.entity';
 import { UsuariosDto } from './dto/usuarios.dto';
 import { UpdateUsuariosDto } from './dto/update-usuarios.dto';
+import * as bcryptjs from 'bcryptjs';
+import { registerDto } from './dto/register.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -12,8 +14,8 @@ export class UsuariosService {
         private readonly usuariosRepository: Repository<Usuarios>,
     ) { }
 
-    findOneByCedula(cedula: string){
-        return this.usuariosRepository.findOneBy({cedula})
+    async findOneByCedula(cedula: string){
+        return await this.usuariosRepository.findOneBy({cedula})
     }
 
     create(createUserDto: UsuariosDto ){
@@ -23,6 +25,30 @@ export class UsuariosService {
     Equipo(usuariosDto: UsuariosDto) {
 
         return this.usuariosRepository.insert(usuariosDto);
+    }
+
+    async registerIn({ cedula, nombre, apellido, telefono, email, password, roles }: registerDto) {
+        try {
+            const user = await this.findOneByCedula(cedula);
+            if (user) {
+                throw new BadRequestException('Usuario ya existe!');
+            }
+
+            const hashedPassword = await bcryptjs.hash(password, 10);
+            const newUser = this.usuariosRepository.create({
+                cedula,
+                nombre,
+                apellido,
+                telefono,
+                email,
+                password: hashedPassword,
+                roles
+            });
+            await this.usuariosRepository.save(newUser);
+            return newUser;
+        } catch (error) {
+            throw new BadRequestException('Error al registrar usuario.');
+        }
     }
 
     Obtener_cedula(cedula: string) {
