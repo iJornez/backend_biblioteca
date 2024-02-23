@@ -19,7 +19,7 @@ import {
       if (err || !user) {
         throw err || new UnauthorizedException();
       }
-      const rolesAllow = 'Admin';
+      const rolesAllow = 'Administrador';
       if (user.rol == rolesAllow) {
         throw new UnauthorizedException(
           'El usuario no tiene los permisos necesarios',
