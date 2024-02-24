@@ -6,7 +6,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../interfaces/jwt-strategy.interface';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { Repository } from 'typeorm';
 import { Usuarios } from 'src/usuarios/entities/usuarios.entity';
 
