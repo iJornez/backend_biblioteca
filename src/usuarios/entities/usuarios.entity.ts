@@ -27,7 +27,7 @@ export class Usuarios {
 
   @ManyToOne(() => EstadoUsuario, (estadoUsuario) => estadoUsuario.usuario)
   @JoinColumn()
-  estadoDelUsuario: EstadoUsuario[];
+  estadoDelUsuario: EstadoUsuario;
 
   @ManyToOne(() => Role, usuario => usuario.roles)
   @JoinColumn()

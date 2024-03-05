@@ -2,8 +2,6 @@ import { BadRequestException, Body, Injectable, NotFoundException } from '@nestj
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuarios } from './entities/usuarios.entity';
-import { UsuariosDto } from './dto/usuarios.dto';
-import { UpdateUsuariosDto } from './dto/update-usuarios.dto';
 import * as bcryptjs from 'bcryptjs';
 import { registerDto } from './dto/register.dto';
 
@@ -18,16 +16,7 @@ export class UsuariosService {
         return await this.usuariosRepository.findOneBy({cedula})
     }
 
-    create(createUserDto: UsuariosDto ){
-        return this.usuariosRepository.save(createUserDto)
-    }
-
-    Equipo(usuariosDto: UsuariosDto) {
-
-        return this.usuariosRepository.insert(usuariosDto);
-    }
-
-    async registerIn({ cedula, nombre, apellido, telefono, email, password, roles }: registerDto) {
+    async registerIn({ cedula, nombre, apellido, telefono, email, estadoDelUsuario, password, roles }: registerDto) {
         try {
             const user = await this.findOneByCedula(cedula);
             if (user) {
@@ -41,6 +30,7 @@ export class UsuariosService {
                 apellido,
                 telefono,
                 email,
+                estadoDelUsuario,
                 password: hashedPassword,
                 roles
             });
@@ -59,24 +49,16 @@ export class UsuariosService {
         return this.usuariosRepository.find({relations:{roles:true, estadoDelUsuario:true}});
     }
 
-    async Actualizar(cedula: string, UpdateUsuariosDto: UpdateUsuariosDto): Promise<Usuarios> {
+    async Actualizar(cedula: string): Promise<Usuarios> {
         const usuarios = await this.usuariosRepository.findOneBy({ cedula: cedula });
 
         if (!usuarios) {
             throw new NotFoundException(`El usuario con la cedula ${cedula} no existe`);
         }
 
-        this.usuariosRepository.merge(usuarios, UpdateUsuariosDto);
+        this.usuariosRepository.merge(usuarios);
         return this.usuariosRepository.save(usuarios);
     }
-
-    ActualizarTodo(updateUsuariosDto : UpdateUsuariosDto) {
-        const usuario = this.usuariosRepository.findBy({ cedula: updateUsuariosDto.cedula });
-        if (!usuario) {
-          throw new NotFoundException(`El usuariono existe`);
-        }
-        return this.usuariosRepository.update({cedula: updateUsuariosDto.cedula}, updateUsuariosDto);
-      }
 
     EliminarUsuario(cedula) {
         return this.usuariosRepository.delete(cedula);

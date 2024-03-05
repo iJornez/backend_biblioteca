@@ -24,16 +24,10 @@ export class UsuariosController {
     return this.usuariosService.Obtener_cedula(cedula);
   }
 
-  @Put('/actualizar')
-  Actualizar( @Body() CreateEquipoDto: UpdateUsuariosDto) {
-    return this.usuariosService.ActualizarTodo(CreateEquipoDto);
-  }
-
-  
 
   @Put('/actualizar/:cedula')
-  ActualizarUsuario(@Param('cedula') cedula: string, @Body() UpdateUsuariosDto: UpdateUsuariosDto): Promise<Usuarios> {
-    return this.usuariosService.Actualizar(cedula, UpdateUsuariosDto);
+  ActualizarUsuario(@Param('cedula') cedula: string ): Promise<Usuarios> {
+    return this.usuariosService.Actualizar(cedula);
   }
 
   @Delete('/eliminar/:cedula')

@@ -11,7 +11,7 @@ export class PrestamosController {
   Estado(@Body() Prestamo: CreatePrestamoDto) {
     console.log(Prestamo);
     return this.prestamosService.Crearprestamo(Prestamo);
-    
+
   }
 
   @Get('/obtener_prestamo/:cedula')
