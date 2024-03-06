@@ -52,7 +52,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (cedula == null && password == null) {
       return new BadRequestException("Escriba los datos correctamente!");
     }
-    
+
     const userBd = await this.usuarioRepository
       .find({
         where: { cedula: cedula },

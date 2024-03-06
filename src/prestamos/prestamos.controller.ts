@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req } from '@nestjs/common';
 import { PrestamosService } from './prestamos.service';
 import { CreatePrestamoDto } from './dto/create-prestamo.dto';
 import { DevolverDto } from './dto/devolver.dto';

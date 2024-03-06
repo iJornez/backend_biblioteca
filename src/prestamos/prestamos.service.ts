@@ -74,7 +74,7 @@ export class PrestamosService {
   }
 
   Obtener_prestamousuario(id: string) {
-    return this.prestamostabla.find({ where: { usuario: { cedula: id } }, relations: { prestamo_detalle: true, estado_prestamo: true } });
+    return this.prestamostabla.find({ where: { usuario: { cedula: id } }, relations: { prestamo_detalle: true, estado_prestamo: true, usuario: true } });
   }
 
   Eliminar(id: number) {
@@ -117,10 +117,10 @@ export class PrestamosService {
     if (novedadesCreate) {
       for (const equipo of devolver.equipos) {
         await this.equipoService.ActualizarEstadoEquipo(equipo.idEquipo, equipo.idEstado);
-       
+
       }
       return { message: 'Estado del equipo actualizado con exito!' };
     }
   }
-  
+
 }

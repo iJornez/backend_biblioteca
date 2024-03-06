@@ -15,7 +15,7 @@ import { CreateDetallePrestamoDto } from './dto/create-detalle-prestamo.dto';
 export class DetallePrestamoController {
   constructor(
     private readonly detallePrestamoService: DetallePrestamoService,
-  ) {}
+  ) { }
 
   @Post('/crear')
   Estado(@Body() estadoequipo: CreateDetallePrestamoDto) {
