@@ -49,14 +49,21 @@ export class UsuariosService {
         return this.usuariosRepository.find({relations:{roles:true, estadoDelUsuario:true}});
     }
 
-    async Actualizar(cedula: string): Promise<Usuarios> {
-        const usuarios = await this.usuariosRepository.findOneBy({ cedula: cedula });
+    async Actualizar( cedula: string,usuarioDto: registerDto): Promise<Usuarios> {
+        const usuarios = await this.usuariosRepository.findOneBy({ cedula: usuarioDto.cedula });
 
         if (!usuarios) {
-            throw new NotFoundException(`El usuario con la cedula ${cedula} no existe`);
+            throw new NotFoundException(`El usuario con la cedula ${usuarioDto.cedula} no existe`);
         }
 
-        this.usuariosRepository.merge(usuarios);
+        usuarios.nombre = usuarioDto.nombre;
+        usuarios.apellido = usuarioDto.apellido;
+        usuarios.telefono = usuarioDto.telefono;
+        usuarios.email = usuarioDto.email;
+        usuarios.estadoDelUsuario = usuarioDto.estadoDelUsuario;
+        usuarios.roles = usuarioDto.roles;
+        usuarios.password = usuarioDto.password; 
+        
         return this.usuariosRepository.save(usuarios);
     }
 

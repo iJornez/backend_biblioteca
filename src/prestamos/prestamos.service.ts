@@ -6,10 +6,7 @@ import { EquiposService } from 'src/equipos/equipos.service';
 import { DetallePrestamoService } from 'src/detalle-prestamo/detalle-prestamo.service';
 import { CreateDetallePrestamoDto } from 'src/detalle-prestamo/dto/create-detalle-prestamo.dto';
 import { detallePrestamo } from 'src/detalle-prestamo/entities/detalle-prestamo.entity';
-import { CreatePrestamoDto } from './dto/create-prestamo.dto';
 import { EstadoprestamoService } from 'src/estadoprestamo/estadoprestamo.service';
-import { Estadoprestamo } from 'src/estadoprestamo/entity/estadoprestamo.entity';
-import { UpdateEstadoPrestamoDto } from 'src/estadoprestamo/Dto/update-estadoprestamo.dto';
 import { DevolverDto } from './dto/devolver.dto';
 import { NovedadesService } from 'src/novedades/novedades.service';
 
@@ -22,7 +19,6 @@ export class PrestamosService {
     @Inject(NovedadesService) private novedadesService: NovedadesService,
     @InjectRepository(Prestamo) private prestamostabla: Repository<Prestamo>,
     @InjectRepository(detallePrestamo) private detalle: Repository<detallePrestamo>,
-    @InjectRepository(Estadoprestamo) private estado: Repository<Estadoprestamo>,
   ) { }
 
   async Crearprestamo(prestamos) {

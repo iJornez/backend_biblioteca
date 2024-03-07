@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { UpdateUsuariosDto } from './dto/update-usuarios.dto';
 import { Usuarios } from './entities/usuarios.entity';
 import { registerDto } from './dto/register.dto';
 
@@ -26,8 +25,8 @@ export class UsuariosController {
 
 
   @Put('/actualizar/:cedula')
-  ActualizarUsuario(@Param('cedula') cedula: string ): Promise<Usuarios> {
-    return this.usuariosService.Actualizar(cedula);
+  ActualizarUsuario(@Param('cedula') cedula: string, @Body() usuarioDto: registerDto): Promise<Usuarios> {
+    return this.usuariosService.Actualizar(cedula, usuarioDto);
   }
 
   @Delete('/eliminar/:cedula')
