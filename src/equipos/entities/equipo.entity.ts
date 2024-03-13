@@ -22,6 +22,9 @@ export class Equipo {
   serial: string;
 
   @Column()
+  telefonica: string;
+
+  @Column()
   descripcion: string;
 
   @ManyToOne(() => Estadoequipo, (estadoequipo) => estadoequipo.estado, {eager: true})
