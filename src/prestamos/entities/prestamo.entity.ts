@@ -13,10 +13,17 @@ export class Prestamo {
     @JoinColumn()
     usuario: Usuarios;
 
+    @Column()
+    fecha_prestamo : Date;
+
+    @Column()
+    fecha_devolucion : Date;
+
     @ManyToOne(() => Estadoprestamo, (usuario) => usuario.detalle_prestamo)
     @JoinColumn()
     estado_prestamo: Estadoprestamo;
 
+  
 
     @OneToMany(() => Novedades, (novedades) => novedades.prestamo)
     prestamo: Novedades[];

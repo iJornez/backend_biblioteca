@@ -52,7 +52,7 @@ export class PrestamosService {
     }
 
     for (let data of prestar) {
-
+      
       let detalle = new CreateDetallePrestamoDto(id, data.codigo, prestamos.fecha_prestamo, prestamos.fecha_devolucion);
       console.log(detalle);
       var r = await this.detalle.insert(detalle);
