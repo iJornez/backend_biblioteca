@@ -11,6 +11,8 @@ import { Repository } from 'typeorm';
 import { UpdateEquipoDto } from './dto/update-equipo.dto';
 import { Estadoequipo } from 'src/estadoequipo/entities/estadoequipo.entity';
 import { EstadoequipoService } from 'src/estadoequipo/estadoequipo.service';
+import * as excelToJson from 'convert-excel-to-json'
+import * as fs from 'fs';
 
 @Injectable()
 export class EquiposService {
@@ -81,5 +83,54 @@ export class EquiposService {
 
   obtenerBuenos(tipo:number, estado:number){
     return this.equipoRepository.find({where:{tipo:{id:tipo}, estado:{id:estado}},relations:{tipo:true, estado:true}});
+  }
+
+ async subirMasivo(excel:Express.Multer.File){
+    const equipos = excelToJson({
+      sourceFile: excel.path,
+      header:{
+        rows: 1,
+      }
+    });
+    const keyhojas = Object.keys(equipos);
+    const resp ={ creado: [], nocreado:[]};
+    console.log(equipos);
+    for (let index = 0; index < keyhojas.length; index++) {
+      const equiposHoja= equipos[keyhojas[index]];
+
+      for (let j = 0; index < equiposHoja.length; index++) {
+        const idCompuesto = `${equiposHoja[j]['B']}-${equiposHoja[j]['C']}`;
+        const existEquipo= await this.existEquipo(idCompuesto);
+        if (!existEquipo) {
+          const equipo= {};
+          equipo['marca']= equiposHoja[j]['A'];
+          equipo['serial']= idCompuesto;  
+          equipo['tipo_equipo']= parseInt(equiposHoja[j]['C']);
+          equipo['estado_equipo'] = parseInt(equiposHoja[j]['E'])
+          equipo['telefonica']= parseInt(equiposHoja[j]['C']) != 4 ? null: equiposHoja[j]['D'] ;
+          await this.equipoRepository.insert({...equipo, estado: {id: equipo['estado_equipo']}}).then(eq=>{
+            if (eq != null) {
+              resp.creado.push({serial:equiposHoja[j]['B']});
+            } else{
+              resp.nocreado.push({serial:equiposHoja[j]['B'], ex:eq});
+            }
+            console.log(eq);
+            
+          }).catch(error => {
+            resp.nocreado.push({serial:equiposHoja[j]['B'], ex:error})
+          });
+        }
+      }
+    }
+    fs.unlinkSync(excel.path);
+    return resp;
+  }
+
+  async existEquipo(serial: string):Promise<boolean>{
+    return await this.equipoRepository.find({where: {serial: serial}}).then(equipos=>{
+      return equipos.length>0;
+    }).catch(()=>{
+      return false;
+    });
   }
 }
