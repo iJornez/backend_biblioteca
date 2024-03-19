@@ -32,7 +32,7 @@ export class PrestamosService {
       let contador = 1;
       for (let d of equipos) {
         if (contador <= data.cantidad) {
-          r2 = await this.detalleService.obtener(d.codigo, prestamos.fecha_prestamo, prestamos.fecha_devolucion);
+          r2 = await this.detalleService.obtener(d.serial, prestamos.fecha_prestamo, prestamos.fecha_devolucion);
           console.log('r2: ', r2);
 
           if (r2.length == 0) {
@@ -53,7 +53,7 @@ export class PrestamosService {
 
     for (let data of prestar) {
       
-      let detalle = new CreateDetallePrestamoDto(id, data.codigo, prestamos.fecha_prestamo, prestamos.fecha_devolucion);
+      let detalle = new CreateDetallePrestamoDto(id, data.serial, prestamos.fecha_prestamo, prestamos.fecha_devolucion);
       console.log(detalle);
       var r = await this.detalle.insert(detalle);
     }

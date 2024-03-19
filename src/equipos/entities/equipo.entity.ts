@@ -15,23 +15,22 @@ import {
 
 @Entity({ name: 'equipo', schema: 'public' })
 export class Equipo {
-  @PrimaryColumn()
-  codigo: number;  
 
-  @Column()
+  @PrimaryColumn()
   serial: string;
 
-  @Column()
+
+  @Column({ nullable: true })
   telefonica: string;
 
   @Column()
-  descripcion: string;
+  marca: string;
 
-  @ManyToOne(() => Estadoequipo, (estadoequipo) => estadoequipo.estado, {eager: true})
+  @ManyToOne(() => Estadoequipo, (estadoequipo) => estadoequipo.estado, { eager: true })
   @JoinColumn()
   estado: Estadoequipo;
 
-  @ManyToOne(() => TiposEquipos, (TiposEquipos) => TiposEquipos.equipo_tipo, {eager: true})
+  @ManyToOne(() => TiposEquipos, (TiposEquipos) => TiposEquipos.equipo_tipo, { eager: true })
   @JoinColumn()
   tipo: TiposEquipos[];
 

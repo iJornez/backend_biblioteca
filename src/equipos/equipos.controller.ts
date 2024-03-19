@@ -21,7 +21,7 @@ import { diskStorage } from 'multer';
 
 @Controller('equipos')
 export class EquiposController {
-  constructor(private readonly equiposService: EquiposService) {}
+  constructor(private readonly equiposService: EquiposService) { }
 
   @Post('/crear')
   async Equipo(@Body() createEquipoDto: CreateEquipoDto) {
@@ -37,17 +37,17 @@ export class EquiposController {
   @UseInterceptors(
     FileInterceptor('excel', {
       storage: diskStorage({
-        destination:'./uploads',
-        filename: (req, file, cb)=>{
+        destination: './uploads',
+        filename: (req, file, cb) => {
           const unique = Date.now() + Math.random() * 10e9;
-          const ext= file.originalname.split('.');
-          cb(null,`${unique}.${ext[ext.length - 1]}`);
+          const ext = file.originalname.split('.');
+          cb(null, `${unique}.${ext[ext.length - 1]}`);
         }
       })
     })
   )
   @Post('/subirMasivo')
-  async subirMasivo(@UploadedFile() excel: Express.Multer.File ){
+  async subirMasivo(@UploadedFile() excel: Express.Multer.File) {
     return await this.equiposService.subirMasivo(excel);
   }
 
@@ -56,13 +56,13 @@ export class EquiposController {
     return this.equiposService.ObtenerTodo();
   }
 
-  @Get('/obtener_equipo/:codigo')
-  Obtener_equipo_By_Id(@Param('codigo') codigo: number) {
-    return this.equiposService.Obtener_id(codigo);
+  @Get('/obtener_equipo/:serial')
+  Obtener_equipo_By_Id(@Param('serial') serial: string) {
+    return this.equiposService.Obtener_id(serial);
   }
 
-  @Put('/actualizar/:codigo')
-  Actualizar_PorCodigo(@Param('codigo') id: number, @Body() updateEquipoDto: UpdateEquipoDto,): Promise<Equipo> {
+  @Put('/actualizar/:serial')
+  Actualizar_PorCodigo(@Param('serial') id: string, @Body() updateEquipoDto: UpdateEquipoDto,): Promise<Equipo> {
     return this.equiposService.Actualizar(id, updateEquipoDto);
   }
 
@@ -71,20 +71,20 @@ export class EquiposController {
     return this.equiposService.ActualizarTodo(CreateEquipoDto);
   }
 
-  @Put('/actualizar_estado_equipo/:codigo/:idEstado')
-  ActualizarEquipo(@Param('codigo') codigo:number, @Param('idEstado') idEstado:number)  {
-    return this.equiposService.ActualizarEstadoEquipo(codigo, idEstado);
+  @Put('/actualizar_estado_equipo/:serial/:idEstado')
+  ActualizarEquipo(@Param('codigo') serial: string, @Param('idEstado') idEstado: number) {
+    return this.equiposService.ActualizarEstadoEquipo(serial, idEstado);
   }
 
 
-  @Delete('/eliminar/:codigo')
-  Eliminar(@Param('codigo') id: number) {
+  @Delete('/eliminar/:serial')
+  Eliminar(@Param('serial ') id: number) {
     return this.equiposService.EliminarEquipo(id);
   }
 
-  @Delete('/:codigo')
-  EliminarEquipo(@Param('codigo') codigo: number) {
-    return this.equiposService.EliminarEquipoPorCodigo(codigo);
+  @Delete('/:serial')
+  EliminarEquipo(@Param('serial') serial: string) {
+    return this.equiposService.EliminarEquipoPorCodigo(serial);
   }
 
   @Get('/obtenerBuenos/:tipo/:estado')

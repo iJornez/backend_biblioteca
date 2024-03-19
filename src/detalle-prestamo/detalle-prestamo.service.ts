@@ -21,10 +21,10 @@ export class DetallePrestamoService {
   Estado(estadoequipo) {
     return this.detalleprestamorepository.insert(estadoequipo);
   }
-  async obtener(codigo_equipo, fechaInicio, fechaDevolucion) {
+  async obtener(serial_equipo, fechaInicio, fechaDevolucion) {
     fechaInicio = new Date(fechaInicio);
     fechaDevolucion = new Date(fechaDevolucion);
-    console.log('ob', codigo_equipo, fechaInicio, fechaDevolucion);
+    console.log('ob', serial_equipo, fechaInicio, fechaDevolucion);
 
     fechaInicio = new Date(fechaInicio);
     fechaDevolucion = new Date(fechaDevolucion);
@@ -33,17 +33,17 @@ export class DetallePrestamoService {
         {
           fecha_prestamo: MoreThanOrEqual(fechaInicio),
           fecha_devolucion: LessThanOrEqual(fechaDevolucion),
-          equipo: { codigo: Equal(codigo_equipo) },
+          equipo: { serial: Equal(serial_equipo) },
         },
         {
           fecha_prestamo: LessThanOrEqual(fechaInicio),
           fecha_devolucion: MoreThanOrEqual(fechaInicio),
-          equipo: { codigo: Equal(codigo_equipo) },
+          equipo: { serial: Equal(serial_equipo) },
         },
         {
           fecha_prestamo: LessThanOrEqual(fechaDevolucion),
           fecha_devolucion: MoreThanOrEqual(fechaDevolucion),
-          equipo: { codigo: Equal(codigo_equipo) },
+          equipo: { serial: Equal(serial_equipo) },
         }
       ]
 

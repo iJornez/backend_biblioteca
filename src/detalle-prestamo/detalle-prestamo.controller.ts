@@ -23,8 +23,8 @@ export class DetallePrestamoController {
   }
 
   @Get('/obtener')
-  obtener(@Query('codigo_equipo') codigo_equipo, @Query('fechaInicio') fechaInicio, @Query('fechaDevolucion') fechaDevolucion) {
-    return this.detallePrestamoService.obtener(codigo_equipo, fechaInicio, fechaDevolucion);
+  obtener(@Query('serial_equipo') serial_equipo, @Query('fechaInicio') fechaInicio, @Query('fechaDevolucion') fechaDevolucion) {
+    return this.detallePrestamoService.obtener(serial_equipo, fechaInicio, fechaDevolucion);
   }
 
   @Delete('eliminar/:id')
