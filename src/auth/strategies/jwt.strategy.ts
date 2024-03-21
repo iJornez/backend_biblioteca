@@ -74,6 +74,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       rol: (userBd[0].roles == null) ? 'Sin Rol' : userBd[0].roles.descripcion,
       access_token: await this.jwtService.signAsync(payloadZ),
     };
-    return userReturn;
+    if (userReturn === null) {
+      throw new UnauthorizedException('Ingrese credenciales validas!')
+    } else {
+      return userReturn;
+    }
+
   }
 }
