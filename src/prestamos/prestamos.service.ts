@@ -52,7 +52,7 @@ export class PrestamosService {
     }
 
     for (let data of prestar) {
-      
+
       let detalle = new CreateDetallePrestamoDto(id, data.serial, prestamos.fecha_prestamo, prestamos.fecha_devolucion);
       console.log(detalle);
       var r = await this.detalle.insert(detalle);
@@ -115,8 +115,12 @@ export class PrestamosService {
         await this.equipoService.ActualizarEstadoEquipo(equipo.idEquipo, equipo.idEstado);
 
       }
+      const idPrestamo = devolver.idPrestamo;
+      await this.ActualizarEstadoPrestamo(idPrestamo, 3);
       return { message: 'Estado del equipo actualizado con exito!' };
     }
+
+
   }
 
 }
