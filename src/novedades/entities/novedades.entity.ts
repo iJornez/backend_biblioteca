@@ -11,7 +11,7 @@ export class Novedades {
   @JoinColumn()
   prestamo: Prestamo;
 
-  @Column()
+  @Column({nullable: true})
   descripcion: string;
 
   @ManyToOne(() => Equipo, equipo => equipo.novedades)
