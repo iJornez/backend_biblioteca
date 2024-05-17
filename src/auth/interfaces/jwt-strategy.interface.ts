@@ -1,4 +1,4 @@
 export interface JwtPayload {
-    readonly cedula: string;
+    readonly cedula: number;
     readonly password: string;
 }

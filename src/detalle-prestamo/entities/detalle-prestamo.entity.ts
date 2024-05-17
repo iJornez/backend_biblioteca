@@ -7,19 +7,21 @@ export class detallePrestamo {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Equipo, (equipo) => equipo.detalle_prestamo,{
-        eager:true
+    @Column({ type: 'datetime', default: () => 'NOW()' })
+    fecha_prestamo: Date;
+
+    @Column({ type: 'datetime', nullable: true })
+    fecha_devolucion: Date;
+
+    @ManyToOne(() => Equipo, (equipo) => equipo.detalle_prestamo, {
+        eager: true
     })
     equipo: Equipo;
 
-    @Column()
-    fecha_prestamo : Date;
-
-    @Column()
-    fecha_devolucion : Date;
-
-    
-    @ManyToOne(() => Prestamo, (detallePrestamo) => detallePrestamo.prestamo_detalle)
+    @ManyToOne(() => Prestamo, (detallePrestamo) => detallePrestamo.prestamo_detalle, {
+        cascade: true,
+        onDelete: 'CASCADE'
+    })
     detalle_prestamo: Prestamo;
 
 

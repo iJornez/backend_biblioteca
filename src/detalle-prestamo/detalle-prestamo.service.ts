@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { detallePrestamo } from './entities/detalle-prestamo.entity';
 import {
+  Between,
   DataSource,
   Equal,
+  In,
   LessThanOrEqual,
   MoreThanOrEqual,
   Repository,
 } from 'typeorm';
+import { UpdateDetallePrestamoDto } from './dto/update-detalle-prestamo.dto';
+import { CreateDetallePrestamoDto } from './dto/create-detalle-prestamo.dto';
 
 @Injectable()
 export class DetallePrestamoService {
@@ -16,43 +20,73 @@ export class DetallePrestamoService {
     @InjectRepository(detallePrestamo)
     private readonly detalleprestamorepository: Repository<detallePrestamo>,
   ) { }
-  async crear(detalles) {
-  }
-  Estado(estadoequipo) {
-    return this.detalleprestamorepository.insert(estadoequipo);
-  }
-  async obtener(serial_equipo, fechaInicio, fechaDevolucion) {
-    fechaInicio = new Date(fechaInicio);
-    fechaDevolucion = new Date(fechaDevolucion);
-    console.log('ob', serial_equipo, fechaInicio, fechaDevolucion);
 
-    fechaInicio = new Date(fechaInicio);
-    fechaDevolucion = new Date(fechaDevolucion);
-    const r = await this.dataSource.getRepository(detallePrestamo).find({
-      where: [
-        {
-          fecha_prestamo: MoreThanOrEqual(fechaInicio),
-          fecha_devolucion: LessThanOrEqual(fechaDevolucion),
-          equipo: { serial: Equal(serial_equipo) },
-        },
-        {
-          fecha_prestamo: LessThanOrEqual(fechaInicio),
-          fecha_devolucion: MoreThanOrEqual(fechaInicio),
-          equipo: { serial: Equal(serial_equipo) },
-        },
-        {
-          fecha_prestamo: LessThanOrEqual(fechaDevolucion),
-          fecha_devolucion: MoreThanOrEqual(fechaDevolucion),
-          equipo: { serial: Equal(serial_equipo) },
-        }
-      ]
-
-
-    });
-    return r;
+  async crearDetallePrestamo(DetallePrestamo: CreateDetallePrestamoDto[] | any[]) {
+    return await this.dataSource
+      .getRepository(detallePrestamo)
+      .createQueryBuilder()
+      .insert()
+      .into(detallePrestamo)
+      .values(DetallePrestamo)
+      .execute();
   }
 
-  eliminar(id: number) {
-    return this.detalleprestamorepository.delete(id);
+  getDetallePrestamos() {
+    return this.detalleprestamorepository.find();
   }
+
+  async getDetallePrestamo(idPrestamo: number) {
+    return await this.detalleprestamorepository.find({
+      where: {
+        detalle_prestamo: { id: idPrestamo }
+      }
+    })
+  }
+
+  async updateDetallePrestamo(id: number, updateDetallePrestamo: UpdateDetallePrestamoDto) {
+    return await this.detalleprestamorepository.update({ id }, updateDetallePrestamo);
+  }
+
+  async deleteDetallePrestamo(id: number) {
+    return await this.detalleprestamorepository.delete({ id });
+  }
+
+  async equipoPrestado(
+    idEquipo: string,
+    fecha_inicio: Date,
+    fecha_fin: Date,
+  ): Promise<boolean> {
+    return await this.dataSource
+      .getRepository(detallePrestamo)
+      .find({
+        where: [
+          {
+            equipo: { serial: idEquipo },
+            fecha_prestamo: MoreThanOrEqual(fecha_inicio),
+            fecha_devolucion: LessThanOrEqual(fecha_inicio),
+            detalle_prestamo: { estado_prestamo: { id: In([1, 2]) } },
+          },
+          {
+            equipo: { serial: idEquipo },
+            fecha_prestamo: Between(fecha_inicio, fecha_fin),
+            detalle_prestamo: { estado_prestamo: { id: In([1, 2]) } },
+          },
+          {
+            equipo: { serial: idEquipo },
+            fecha_devolucion: Between(fecha_inicio, fecha_fin),
+            detalle_prestamo: { estado_prestamo: { id: In([1, 2]) } },
+          },
+        ],
+      })
+      .then((detalle) => {
+        console.log('Equipos encontrados: idEquipo', idEquipo, detalle);
+
+        return detalle.length > 0;
+      })
+      .catch((error) => {
+        console.log('Error en equipo prestados: ', error);
+        return true;
+      });
+  }
+
 }

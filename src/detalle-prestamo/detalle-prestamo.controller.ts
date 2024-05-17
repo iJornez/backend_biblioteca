@@ -7,9 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
+  ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { DetallePrestamoService } from './detalle-prestamo.service';
 import { CreateDetallePrestamoDto } from './dto/create-detalle-prestamo.dto';
+import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+import { detallePrestamo } from './entities/detalle-prestamo.entity';
+import { AdminAuthGuard } from 'src/guard/admin.guard';
+import { UpdateDetallePrestamoDto } from './dto/update-detalle-prestamo.dto';
 
 @Controller('detalle-prestamo')
 export class DetallePrestamoController {
@@ -17,18 +24,21 @@ export class DetallePrestamoController {
     private readonly detallePrestamoService: DetallePrestamoService,
   ) { }
 
-  @Post('/crear')
-  Estado(@Body() estadoequipo: CreateDetallePrestamoDto) {
-    return this.detallePrestamoService.Estado(estadoequipo);
+  @UseGuards(JwtAuthGuard)
+  @Get('/:idPrestamo')
+  async getDetallePrestamo(@Param('idPrestamo', ParseIntPipe) idPrestamo: number): Promise<detallePrestamo[]> {
+    return await this.detallePrestamoService.getDetallePrestamo(idPrestamo);
   }
 
-  @Get('/obtener')
-  obtener(@Query('serial_equipo') serial_equipo, @Query('fechaInicio') fechaInicio, @Query('fechaDevolucion') fechaDevolucion) {
-    return this.detallePrestamoService.obtener(serial_equipo, fechaInicio, fechaDevolucion);
+  @UseGuards(AdminAuthGuard)
+  @Put('/actualizar/:id')
+  updateDetallePrestamo(@Param('id', ParseIntPipe) id: number, @Body() updateDetallePrestamo: UpdateDetallePrestamoDto) {
+    return this.detallePrestamoService.updateDetallePrestamo(id, updateDetallePrestamo);
   }
 
-  @Delete('eliminar/:id')
-  Eliminar(@Param('id') id: number) {
-    return this.detallePrestamoService.eliminar(id);
+  @UseGuards(AdminAuthGuard)
+  @Delete('/:id')
+  async deleteDetallePrestamo(@Param('id', ParseIntPipe) id:number){
+    return await this.detallePrestamoService.deleteDetallePrestamo(id);
   }
 }

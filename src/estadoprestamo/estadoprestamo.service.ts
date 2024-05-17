@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCatDto } from './Dto/CreateCat.Dto';
-import { Estadoprestamo } from './entity/estadoprestamo.entity';
+import { CreateCatDto } from './dto/CreateCat.Dto';
+import { Estadoprestamo } from './entities/estadoprestamo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UpdateEstadoPrestamoDto } from './Dto/update-estadoprestamo.dto';
+import { UpdateEstadoPrestamoDto } from './dto/update-estadoprestamo.dto';
 
 
 @Injectable()
@@ -13,26 +13,36 @@ export class EstadoprestamoService {
     private readonly estadoprestamoRepository: Repository<Estadoprestamo>,
   ) { }
 
-  async Estado(tipo: CreateCatDto): Promise<void> {
-    const newtipo = this.estadoprestamoRepository.create();
-    await this.estadoprestamoRepository.save(newtipo);
-    console.log('hola´');
+  async CrearEstado(CreateCatDto: CreateCatDto) {
+    return await this.estadoprestamoRepository.insert(CreateCatDto).then(estado => {
+      return estado != null ? { creado: true, message: 'Estado creado', ex: null } : { creado: false, message: 'No se pudo crear el estado', ex: estado };
+    }).catch(error => {
+      return {
+        creado: false,
+        message: 'Sucedió un error creando el estado',
+        ex: error
+      }
+    });
   }
+
   Obtener_id(id: number) {
     return this.estadoprestamoRepository.findOneBy({ id: id });
   }
+
   ObtenerTodo() {
     return this.estadoprestamoRepository.find();
   }
-  async Actualizar(id: number){
-    const estadoprestamo = await this.estadoprestamoRepository.findOneBy({ id: id });
 
-    if (!estadoprestamo) {
-      throw new NotFoundException(`El Estado del prestamo con el ID ${id} no existe`);
-    }
+  async getEstadoPrestamoByEstado(
+    estado = 'Prestado',
+  ): Promise<Estadoprestamo> {
+    return await this.estadoprestamoRepository.findOne({
+      where: { estado: estado },
+    });
+  }
 
-    this.estadoprestamoRepository.merge(estadoprestamo);
-    return this.estadoprestamoRepository.save(estadoprestamo);
+  Actualizar(id: number, UpdateEstadoPrestamoDto: UpdateEstadoPrestamoDto) {
+    return this.estadoprestamoRepository.update({ id }, UpdateEstadoPrestamoDto);
   }
 
   EliminarEstado(id: number) {

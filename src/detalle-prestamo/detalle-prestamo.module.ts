@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { DetallePrestamoService } from './detalle-prestamo.service';
 import { DetallePrestamoController } from './detalle-prestamo.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { detallePrestamo } from './entities/detalle-prestamo.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports:[TypeOrmModule.forFeature([detallePrestamo])],

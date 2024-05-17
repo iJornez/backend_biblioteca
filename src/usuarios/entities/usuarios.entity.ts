@@ -1,39 +1,39 @@
-import { join } from 'path';
-import { escape } from 'querystring';
-import { EstadoUsuario } from 'src/estado_usuario/entities/estado_usuario.entity';
 import { Prestamo } from 'src/prestamos/entities/prestamo.entity';
 import { Role } from 'src/roles/entities/role.entity';
-import { Entity, Column,  OneToMany, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'usuarios', schema: 'public' })
+@Entity()
 export class Usuarios {
   @PrimaryColumn()
-  cedula: string;
+  cedula: number;
 
-  @Column()
+  @Column({ type: 'varchar', length:80 })
   nombre: string;
 
-  @Column()
+  @Column({ type: 'varchar', length:80 })
   apellido: string;
 
-  @Column()
-  telefono: number;
+  @Column({ type: 'varchar', length:15 })
+  telefono: string;
 
-  @Column()
+  @Column({ type: 'varchar', unique: true, length:50 })
   email: string;
 
-  @Column({nullable: false})
+  @Column({ type: 'varchar', nullable: false, length: 256 })
   password: string;
 
-  @ManyToOne(() => EstadoUsuario, (estadoUsuario) => estadoUsuario.usuario)
-  @JoinColumn()
-  estadoDelUsuario: EstadoUsuario;
+  @Column({ type: 'varchar', default: 'Activo', nullable:false})
+  estadoDelUsuario: string;
 
-  @ManyToOne(() => Role, usuario => usuario.roles)
-  @JoinColumn()
-  roles: Role;
+  @ManyToOne(() => Role, usuario => usuario.roles, {
+    eager: true
+  })
+  rol: Role;
 
   @OneToMany(() => Prestamo, prestamo => prestamo.usuario)
   prestamos_usuario: Prestamo[];
+
+  @Column({ type: 'varchar', default: null, nullable: true })
+  token_recuperacion: string;
 
 }

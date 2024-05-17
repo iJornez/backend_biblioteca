@@ -1,42 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { PrestamosService } from './prestamos.service';
 import { CreatePrestamoDto } from './dto/create-prestamo.dto';
-import { DevolverDto } from './dto/devolver.dto';
+
+import { UsuarioAuthGuard } from 'src/guard/usuario.guard';
+import { AdminAuthGuard } from 'src/guard/admin.guard';
+import { Prestamo } from './entities/prestamo.entity';
+import { EntregaDto } from './dto/entrega.dto';
+import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+
 
 @Controller('prestamos')
 export class PrestamosController {
   constructor(private readonly prestamosService: PrestamosService) { }
 
+  @UseGuards(UsuarioAuthGuard)
   @Post('/crear')
-  Estado(@Body() Prestamo: CreatePrestamoDto) {
-    console.log(Prestamo);
-    return this.prestamosService.Crearprestamo(Prestamo);
+  async CrearPrestamo(@Body() createPrestamoDto: CreatePrestamoDto) {
+    console.log(createPrestamoDto);
+    return await this.prestamosService.crearprestamo(createPrestamoDto);
 
   }
 
-  @Get('/obtener_prestamo/:cedula')
-  Obtener_prestamoporCedula(@Param('cedula') id: string) {
-    return this.prestamosService.Obtener_prestamousuario(id);
+  @UseGuards(AdminAuthGuard)
+  @Put('/entregar/:id')
+  async entregar(@Param('id') id: number) {
+    return await this.prestamosService.entregar(id);
   }
 
+  @UseGuards(AdminAuthGuard)
+  @Post('/devolucion')
+  async devolucion(@Body() devolucion: EntregaDto) {
+    return await this.prestamosService.devolucion(devolucion);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/usuario/:id/:action')
+  async getPrestamo(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('action') action: string,
+  ) {
+    return await this.prestamosService.obtenerPrestamo(id, action);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('/confirmar/:id')
+  async updatePrestamo(@Param('id', ParseIntPipe) id: number) {
+    return await this.prestamosService.confirmar(id);
+  }
+
+  @UseGuards(AdminAuthGuard)
   @Get('/obtener')
-  obtener() {
-    return this.prestamosService.obtener();
-  }
-
-  @Get('/obtener_tipoequipo/:id')
-  Obtener_tipoequipo_By_Id(@Param('id') id: number) {
-    return this.prestamosService.Obtener_id(id);
-  }
-
-  @Put('/actualizar_estado/:id/:EstadoPrestamoId')
-  ActualizarEstadoPrestamo(@Param('id') id, @Param('EstadoPrestamoId') EstadoPrestamoId) {
-    return this.prestamosService.ActualizarEstadoPrestamo(id, EstadoPrestamoId);
-  }
-
-  @Put('/devolucion')
-  async devolucion(@Body() devolver: DevolverDto) {
-    return await this.prestamosService.devolucion(devolver);
+  async obtenerPrestamos(): Promise<Prestamo[]> {
+    return await this.prestamosService.obtenerPrestamos();
   }
 
   @Delete('eliminar/:id')

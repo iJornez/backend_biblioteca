@@ -1,12 +1,12 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { IsInt, IsNotEmpty } from "class-validator";
-import { CreateCatDto } from "src/estadoprestamo/Dto/CreateCat.Dto";
+import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
+export class UpdateEstadoEquipoDto{
 
-export class UpdateEstadoEquipoDto extends PartialType(CreateCatDto) {
-
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  id: number;
+  @Matches(/^(?!\s*$).+/, { message: 'El Estado no puede ser estar vacío' })
+  @MinLength(1)
+  @MaxLength(20)
+  readonly estado?: string;
 
 }

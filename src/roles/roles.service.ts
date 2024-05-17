@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { Repository } from 'typeorm';
 import { UpdateRolDto } from './dto/update-rolesdto';
+import { rolesDto } from './dto/roles.dto';
 
 @Injectable()
 export class RolesService {
@@ -11,14 +12,11 @@ export class RolesService {
     private readonly rolestables: Repository<Role>,
   ) { }
 
-  Estado(TiposEquipos) {
-    return this.rolestables.insert(TiposEquipos);
+  CrearRol(createRolDto: rolesDto) {
+    return this.rolestables.insert(createRolDto);
   }
   obtener() {
     return this.rolestables.find();
-  }
-  Obtener_id(id: number) {
-    return this.rolestables.findOneBy({ id: id });
   }
 
   async Actualizar(id: number, UpdateRolDto: UpdateRolDto): Promise<Role> {

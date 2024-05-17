@@ -1,13 +1,12 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { IsNotEmpty } from "class-validator";
-import { rolesDto } from "./roles.dto";
+import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
+export class UpdateRolDto {
 
-export class UpdateRolDto extends PartialType(rolesDto) {
-
+  @IsString()
   @IsNotEmpty()
-  id: number;
-
-  descripcion: string;
+  @Matches(/^(?!\s*$).+/, { message: 'El Estado no puede ser estar vacío' })
+  @MinLength(1)
+  @MaxLength(20)
+  readonly descripcion?: string;
 
 }

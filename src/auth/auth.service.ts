@@ -1,6 +1,7 @@
 import { Body, Inject, Injectable } from '@nestjs/common';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto } from 'src/usuarios/dto/register.dto';
+
 
 @Injectable()
 export class AuthService {

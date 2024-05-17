@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EstadoequipoService } from './estadoequipo.service';
 import { CreateEstadoequipoDto } from './dto/create-estadoequipo.dto';
 import { UpdateEstadoEquipoDto } from './dto/update-estadoequipo.dto';
 import { Estadoequipo } from './entities/estadoequipo.entity';
+import { AdminAuthGuard } from 'src/guard/admin.guard';
 
+@UseGuards(AdminAuthGuard)
 @Controller('estadoequipo')
 export class EstadoequipoController {
   constructor(private readonly estadoequipoService: EstadoequipoService) { }
@@ -31,17 +35,13 @@ export class EstadoequipoController {
     return this.estadoequipoService.Obtener_id(id);
   }
 
-  @Get('/obtenerEstadoPorNombre/:nombre')
-  async obtenerTipoPorNombre(@Param('nombre') nombre:string){
-    return await this.estadoequipoService.obtenerTipoPorNombre(nombre);
-  }
   @Put('/actualizar/:id')
-  Actualizar_estado_equipo(@Param('id') id: number, @Body() UpdateEstadoEquipoDto: UpdateEstadoEquipoDto): Promise<Estadoequipo> {
-    return this.estadoequipoService.Actualizar(id);
+  Actualizar_estado_equipo(@Param('id', ParseIntPipe) id: number, @Body() UpdateEstadoEquipoDto: UpdateEstadoEquipoDto) {
+    return this.estadoequipoService.Actualizar(id, UpdateEstadoEquipoDto);
   }
 
   @Delete('eliminar/:id')
-  Eliminar(@Param('id') id: number) {
+  Eliminar(@Param('id', ParseIntPipe) id: number) {
     return this.estadoequipoService.EliminarEstado(id);
   }
 }

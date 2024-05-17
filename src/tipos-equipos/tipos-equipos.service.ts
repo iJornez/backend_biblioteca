@@ -1,49 +1,40 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { TiposEquipos } from './entities/tipos-equipos.entity';
-import { Repository } from 'typeorm';
-import { TiposEquiposDto } from './dto/tipos.equipos.Dto';
-import { UpdateTipoEquipoDto } from './dto/update-tipoequipo.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { TiposEquipos } from "./entities/tipos-equipos.entity";
+import { Repository } from "typeorm";
+import { TiposEquiposDto } from "./dto/tipos-equipos.Dto";
+import { UpdateTipoEquipoDto } from "./dto/update-tipoequipo.dto";
+
 
 @Injectable()
-export class TiposEquiposService {
+export class TipoEquipoService {
   constructor(
     @InjectRepository(TiposEquipos)
-    private readonly TiposEquiposTablas: Repository<TiposEquipos>,
-  ) {}
-
-  Estado(TiposEquipos: TiposEquiposDto) {
-    return this.TiposEquiposTablas.insert(TiposEquipos);
+    private tipoEquipoRepository: Repository<TiposEquipos>,
+  ) { }
+  async createTipoEquipo(createTipoEquipoDto: TiposEquiposDto) {
+    return await this.tipoEquipoRepository.insert(createTipoEquipoDto);
   }
 
-  obtener() {
-    return this.TiposEquiposTablas.find();
+  async getTipoEquipos() {
+    return await this.tipoEquipoRepository.find();
   }
 
-  Obtener_id(id) {
-    return this.TiposEquiposTablas.find(id );
+  getTipoEquipo(id: number) {
+    return this.tipoEquipoRepository.findOne({
+      where: {
+        id,
+      },
+    });
   }
-  async obtenerTipoPorNombre(nombre: string): Promise<TiposEquipos[] | []> {
-    return await this.TiposEquiposTablas.findBy({ tipo: nombre });
+  async getPorTipo(tipo: string) {
+    return await this.tipoEquipoRepository.find({ where: { tipo: tipo } });
   }
-  
-  async Actualizar(
-    id: number,
-    updateTipoEquipoDto: UpdateTipoEquipoDto,
-  ): Promise<TiposEquipos> {
-    const tipo_equipo = await this.TiposEquiposTablas.findOneBy({ id: id });
-
-    if (!tipo_equipo) {
-      throw new NotFoundException(
-        `El tipo de equipo con el ID ${id} no existe`,
-      );
-    }
-
-    this.TiposEquiposTablas.merge(tipo_equipo, updateTipoEquipoDto);
-    return this.TiposEquiposTablas.save(tipo_equipo);
+  updateTipoEquipo(id: number, tipoEquipo: UpdateTipoEquipoDto) {
+    return this.tipoEquipoRepository.update({ id }, tipoEquipo);
   }
 
-  Eliminar(id: number) {
-    return this.TiposEquiposTablas.delete({ id: id });
+  deleteTipoEquipo(id: number) {
+    return this.tipoEquipoRepository.delete({ id });
   }
 }

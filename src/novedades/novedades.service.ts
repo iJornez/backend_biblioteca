@@ -13,32 +13,32 @@ export class NovedadesService {
     private dataSource: DataSource
   ) { }
 
-  Novedad(tipo) {
-    return this.novedadesRepository.insert(tipo);
+  CrearNovedad(novedadGeneral: CrearNovedadesDto) {
+    return this.novedadesRepository.insert(novedadGeneral);
   }
+
   async crearNovedades(novedades: CrearNovedadesDto[]) {
-    return await this.dataSource.getRepository(Novedades).createQueryBuilder().insert().values(novedades).execute();
+    return await this.dataSource
+      .getRepository(Novedades)
+      .createQueryBuilder()
+      .insert()
+      .into(Novedades)
+      .values(novedades)
+      .execute();
   }
-  
+
   obtener() {
     return this.novedadesRepository.find();
   }
-  Obtener_id(id: number) {
+  Obtener_novedad(id: number) {
     return this.novedadesRepository.findOneBy({ id: id });
   }
 
-  async Actualizar(id: number, UpdateNovedadDto: UpdateNovedadDto): Promise<Novedades> {
-    const novedad = await this.novedadesRepository.findOneBy({ id: id });
-
-    if (!novedad) {
-      throw new NotFoundException(`La novedad con el ID ${id} no existe`);
-    }
-
-    this.novedadesRepository.merge(novedad, UpdateNovedadDto);
-    return this.novedadesRepository.save(novedad);
+  async Actualizar(id: number, UpdateNovedadDto: UpdateNovedadDto) {
+    return await this.novedadesRepository.update({ id }, UpdateNovedadDto);
   }
 
   EliminarNovedad(id: number) {
-    return this.novedadesRepository.delete({ id: id });
+    return this.novedadesRepository.delete({ id});
   }
 }

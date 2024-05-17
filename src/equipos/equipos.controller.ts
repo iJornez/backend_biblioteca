@@ -3,14 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
-  NotFoundException,
   InternalServerErrorException,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
 import { CreateEquipoDto } from './dto/create-equipo.dto';
@@ -18,15 +17,17 @@ import { Equipo } from './entities/equipo.entity';
 import { UpdateEquipoDto } from './dto/update-equipo.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { AdminAuthGuard } from 'src/guard/admin.guard';
 
+@UseGuards(AdminAuthGuard)
 @Controller('equipos')
 export class EquiposController {
   constructor(private readonly equiposService: EquiposService) { }
 
   @Post('/crear')
-  async Equipo(@Body() createEquipoDto: CreateEquipoDto) {
+  async crearEquipo(@Body() createEquipoDto: CreateEquipoDto) {
     try {
-      const equipo = await this.equiposService.Equipo(createEquipoDto);
+      const equipo = await this.equiposService.crearEquipo(createEquipoDto);
       return equipo;
     } catch (error) {
       console.error(error);
@@ -56,42 +57,13 @@ export class EquiposController {
     return this.equiposService.ObtenerTodo();
   }
 
-  @Get('/obtener_equipo/:serial')
-  Obtener_equipo_By_Id(@Param('serial') serial: string) {
-    return this.equiposService.Obtener_id(serial);
-  }
-
-  @Put('/actualizar/:serial')
-  Actualizar_PorCodigo(@Param('serial') id: string, @Body() updateEquipoDto: UpdateEquipoDto,): Promise<Equipo> {
-    return this.equiposService.Actualizar(id, updateEquipoDto);
-  }
-
   @Put('/actualizar')
   Actualizar(@Body() CreateEquipoDto: CreateEquipoDto) {
     return this.equiposService.ActualizarTodo(CreateEquipoDto);
   }
 
-  @Put('/actualizar_estado_equipo/:serial/:idEstado')
-  ActualizarEquipo(@Param('codigo') serial: string, @Param('idEstado') idEstado: number) {
-    return this.equiposService.ActualizarEstadoEquipo(serial, idEstado);
-  }
-
-
-  @Delete('/eliminar/:serial')
-  Eliminar(@Param('serial ') id: number) {
-    return this.equiposService.EliminarEquipo(id);
-  }
-
   @Delete('/:serial')
   EliminarEquipo(@Param('serial') serial: string) {
-    return this.equiposService.EliminarEquipoPorCodigo(serial);
-  }
-
-  @Get('/obtenerBuenos/:tipo/:estado')
-  obtener_equipo_buenos(
-    @Param('tipo') tipo: number,
-    @Param('estado') estado: number,
-  ) {
-    return this.equiposService.obtenerBuenos(tipo, estado);
+    return this.equiposService.EliminarEquipoPorSerial(serial);
   }
 }

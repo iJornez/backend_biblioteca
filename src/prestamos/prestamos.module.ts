@@ -13,8 +13,8 @@ import { NovedadesModule } from 'src/novedades/novedades.module';
 import { NovedadesService } from 'src/novedades/novedades.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Prestamo]),EquiposModule,DetallePrestamoModule, EstadoprestamoModule, NovedadesModule],
-  providers: [PrestamosService,EquiposService,DetallePrestamoService,EstadoprestamoService, NovedadesService],
+  imports: [TypeOrmModule.forFeature([Prestamo]), EquiposModule, DetallePrestamoModule, EstadoprestamoModule, NovedadesModule],
+  providers: [PrestamosService, EquiposService, DetallePrestamoService, EstadoprestamoService, NovedadesService],
   controllers: [PrestamosController]
 })
-export class PrestamosModule {}
+export class PrestamosModule { }

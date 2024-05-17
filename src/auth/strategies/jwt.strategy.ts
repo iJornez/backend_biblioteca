@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuarios } from 'src/usuarios/entities/usuarios.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,24 +25,26 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
   async validate(
     payload: JwtPayload,
-  ) {
+  ): Promise<Usuarios | { access_token: string }> {
     const { cedula } = payload;
     const userBd = await this.usuarioRepository.find({
-      where: { cedula },
+      where: { cedula: cedula },
       relations: {
-        roles: true
+        rol: true
       }
     });
     if (userBd.length == 0) {
       throw new UnauthorizedException('El usuario no esta registrado');
     }
     const payloadZ = {
+      sub: userBd[0].cedula,
       cedula: userBd[0].cedula,
       usuario: userBd[0].nombre,
-      rol: (userBd[0].roles == null) ? 'Sin Rol' : userBd[0].roles.descripcion,
+      rol: (userBd[0].rol == null) ? 'Sin Rol' : userBd[0].rol.descripcion,
+      id_rol: userBd[0].rol.id
     };
     return {
-      ...payloadZ,
+      ...userBd,
       access_token: await this.jwtService.signAsync(payloadZ),
     };
   }
@@ -53,25 +56,42 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return new BadRequestException("Escriba los datos correctamente!");
     }
 
-    const userBd = await this.usuarioRepository
-      .find({
-        where: { cedula: cedula },
-        relations: { roles: true }
-      });
+    const userBd = await this.usuarioRepository.find({
+      where: {
+        cedula: cedula
+      },
+      relations: {
+        rol: true
+      },
+      select: [
+        'cedula',
+        'nombre',
+        'apellido',
+        'email',
+        'password',
+        'rol',
+        'telefono',
+        'estadoDelUsuario'
+      ],
+    });
     console.log(userBd);
     if (userBd.length == 0) {
       throw new UnauthorizedException('El usuario no esta registrado');
-    } else if (!bcrypt.compareSync(password, userBd[0].password)) {
-      throw new UnauthorizedException('La contraseña es incorrecta');
+    } else {
+      if (userBd[0].estadoDelUsuario != 'Activo') {
+        throw new UnauthorizedException('No tiene permisos para acceder');
+      } else if (!bcrypt.compareSync(password, userBd[0].password)) {
+        throw new UnauthorizedException('La contraseña es incorrecta');
+      }
     }
     const payloadZ = {
       cedula: userBd[0].cedula,
       nombre: userBd[0].nombre,
-      rol: (userBd[0].roles == null) ? 'Sin Rol' : userBd[0].roles.descripcion,
+      rol: (userBd[0].rol == null) ? 'Sin Rol' : userBd[0].rol.descripcion,
     };
     delete userBd[0].password;
     const userReturn = {
-      rol: (userBd[0].roles == null) ? 'Sin Rol' : userBd[0].roles.descripcion,
+      rol: (userBd[0].rol == null) ? 'Sin Rol' : userBd[0].rol.descripcion,
       access_token: await this.jwtService.signAsync(payloadZ),
     };
     if (userReturn === null) {

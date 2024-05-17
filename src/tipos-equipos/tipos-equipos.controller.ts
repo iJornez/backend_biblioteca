@@ -1,42 +1,58 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { TiposEquiposService } from './tipos-equipos.service';
-import { TiposEquiposDto } from './dto/tipos.equipos.Dto';
-import { UpdateTipoEquipoDto } from './dto/update-tipoequipo.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { AdminAuthGuard } from 'src/guard/admin.guard';
+import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
 import { TiposEquipos } from './entities/tipos-equipos.entity';
+import { TiposEquiposDto } from './dto/tipos-equipos.Dto';
 
-@Controller('tipos_equipos')
-export class TiposEquiposController {
-  constructor(private readonly tiposEquiposService: TiposEquiposService) { }
+import { UpdateTipoEquipoDto } from './dto/update-tipoequipo.dto';
+import { TipoEquipoService } from './tipos-equipos.service';
 
+
+@Controller('tipo-equipo')
+export class TipoEquipoController {
+  constructor(private readonly tipoEquipoService: TipoEquipoService) { }
+
+  @UseGuards(AdminAuthGuard)
   @Post('/crear')
-  Estado(@Body() TiposEquipos: TiposEquiposDto) {
-    return this.tiposEquiposService.Estado(TiposEquipos);
+  async createTipoEquipo(@Body() newTipoEquipoDto: TiposEquiposDto) {
+    return await this.tipoEquipoService.createTipoEquipo(newTipoEquipoDto);
   }
 
-  @Get('/obtener')
-  obtener() {
-    return this.tiposEquiposService.obtener();
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getTipoEquipos(): Promise<TiposEquipos[]> {
+    return await this.tipoEquipoService.getTipoEquipos();
   }
 
-  @Get('/obtener_tipoequipo')
-  Obtener_tipoequipo_By_Id(@Param('id') id: number) {
-    return this.tiposEquiposService.Obtener_id(id);
+  @UseGuards(AdminAuthGuard)
+  @Get('/tipo/:tipo')
+  async getPorTipo(@Param('tipo') tipo: string) {
+    return await this.tipoEquipoService.getPorTipo(tipo);
   }
 
-  @Get('/obtenerTipoPorNombre/:nombre')
-  async obtenerTipoPorNombre(@Param('nombre') nombre:string){
-    return await this.tiposEquiposService.obtenerTipoPorNombre(nombre);
-  }
+  @UseGuards(AdminAuthGuard)
   @Put('/actualizar/:id')
-  Actualizar(@Param('id') id: number, @Body() updateTipoEquipoDto: UpdateTipoEquipoDto): Promise<TiposEquipos> {
-    return this.tiposEquiposService.Actualizar(id, updateTipoEquipoDto);
-
+  async updateTipoEquipo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() tipoEquipo: UpdateTipoEquipoDto,
+  ) {
+    return await this.tipoEquipoService.updateTipoEquipo(id, tipoEquipo);
   }
 
-  @Delete('eliminar/:id')
-  Eliminar(@Param('id') id: number) {
-    return this.tiposEquiposService.Eliminar(id);
+  @UseGuards(AdminAuthGuard)
+  @Delete('/:id')
+  async deleteTipoEquipo(@Param('id', ParseIntPipe) id: number) {
+    return await this.tipoEquipoService.deleteTipoEquipo(id);
   }
-
-
 }

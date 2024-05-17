@@ -6,8 +6,8 @@ export class Estadoprestamo {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  Estado: string;
+  @Column({ type: 'varchar', length: 15 })
+  estado: string;
 
   @OneToMany(() => Prestamo, (Prestamo) => Prestamo.estado_prestamo)
   detalle_prestamo: Prestamo[];

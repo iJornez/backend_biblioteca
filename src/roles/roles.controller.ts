@@ -6,31 +6,31 @@ import {
   Patch,
   Param,
   Delete,
-  Put
+  Put,
+  UseGuards
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { rolesDto } from './dto/roles.dto';
 import { UpdateRolDto } from './dto/update-rolesdto';
 import { Role } from './entities/role.entity';
+import { AdminAuthGuard } from 'src/guard/admin.guard';
 
+
+@UseGuards(AdminAuthGuard)
 @Controller('roles')
 export class RolesEntity {
   constructor(private readonly rolesService: RolesService) { }
 
   @Post('/crear')
-  Estado(@Body() TiposEquipos: rolesDto) {
-    return this.rolesService.Estado(TiposEquipos);
+  CrearRol(@Body() createRolDto: rolesDto) {
+    return this.rolesService.CrearRol(createRolDto);
   }
 
   @Get('/obtener')
-  obtener() {
+  obtener(): Promise<Role[]> {
     return this.rolesService.obtener();
   }
 
-  @Get('/obtener_rol/:id')
-  Obtener_rol_By_Id(@Param('id') id: number) {
-    return this.rolesService.Obtener_id(id);
-  }
 
   @Put('/actualizar/:id')
   Actualizar_rol(@Param('id') id: number, @Body() updateRolDto: UpdateRolDto): Promise<Role> {

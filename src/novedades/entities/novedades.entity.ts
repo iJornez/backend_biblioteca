@@ -7,13 +7,22 @@ export class Novedades {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Prestamo, (novedades) => novedades.prestamo)
-  @JoinColumn()
-  prestamo: Prestamo;
-
-  @Column({nullable: true})
+  @Column({ type: 'text' })
   descripcion: string;
 
-  @ManyToOne(() => Equipo, equipo => equipo.novedades)
+  @Column({ type: 'datetime', default: () => 'NOW()' })
+  fecha_novedad: Date;
+
+  @ManyToOne(() => Prestamo, (novedades) => novedades.prestamo, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    nullable: false
+  })
+  prestamo: Prestamo;
+
+
+  @ManyToOne(() => Equipo, equipo => equipo.novedades, {
+    nullable: false
+  })
   equipo: Equipo;
 }

@@ -1,13 +1,23 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { IsNotEmpty } from "class-validator";
-import { CreateCatDto } from "src/estadoprestamo/Dto/CreateCat.Dto";
+import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 
-export class UpdateEquipoDto extends PartialType(CreateCatDto) {
 
+export class UpdateEquipoDto{
+
+  @IsString()
   @IsNotEmpty()
-  codigo: number;
-  serial: string;
-  descripcion: string;
+  @Matches(/^(?!\s*$).+/, { message: 'El serial no puede estar vacío' })
+  @MinLength(1)
+  @MaxLength(30)
+  readonly serial: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^(?!\s*$).+/, { message: 'La marca no puede estar vacía' })
+  @MinLength(1)
+  @MaxLength(255)
+  readonly marca: string;
+
+  @IsNumber()
+  readonly estado: number;
 }

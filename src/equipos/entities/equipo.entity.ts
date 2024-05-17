@@ -13,17 +13,17 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 
-@Entity({ name: 'equipo', schema: 'public' })
+@Entity()
 export class Equipo {
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'varchar', length: 45 })
   serial: string;
 
 
-  @Column({ nullable: true })
-  telefonica: string;
+  @Column({ type: 'varchar', nullable: true, default: null })
+  codigo_telefonica: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 45 })
   marca: string;
 
   @ManyToOne(() => Estadoequipo, (estadoequipo) => estadoequipo.estado, { eager: true })
@@ -32,7 +32,7 @@ export class Equipo {
 
   @ManyToOne(() => TiposEquipos, (TiposEquipos) => TiposEquipos.equipo_tipo, { eager: true })
   @JoinColumn()
-  tipo: TiposEquipos[];
+  tipo: TiposEquipos;
 
   @OneToMany(() => Novedades, (novedad) => novedad.equipo)
   novedades: Novedades[];

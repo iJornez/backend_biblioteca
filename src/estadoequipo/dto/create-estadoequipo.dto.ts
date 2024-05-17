@@ -1,7 +1,11 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateEstadoequipoDto {
+
     @IsString()
     @IsNotEmpty()
-    estado: string;
+    @Matches(/^(?!\s*$).+/, { message: 'El Estado no puede ser estar vacío' })
+    @MinLength(1)
+    @MaxLength(20)
+    readonly estado: string;
 }
